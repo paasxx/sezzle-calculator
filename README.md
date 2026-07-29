@@ -9,7 +9,7 @@ Built in staged, reviewable commits. Current state:
 - [x] **Backend core logic** — `internal/calculator` package: Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage. Table-driven unit tests, 100% coverage.
 - [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
 - [x] **Backend Dockerfile** — multi-stage build (`golang:1.24-alpine` → `alpine:3.20`).
-- [x] **Frontend (minimal)** — Vite + React + TypeScript, one form covering all 7 operations, talks to the real backend.
+- [x] **Frontend** — Vite + React + TypeScript, numeric-keypad calculator UI covering all 7 operations, responsive down to small phones.
 - [ ] Frontend tests
 - [ ] Full-stack `docker-compose`
 
@@ -96,10 +96,21 @@ frontend/
 ├── src/
 │   ├── api/client.ts   # typed fetch wrapper, one request shape per operation
 │   ├── types.ts        # Operation union + response type
-│   ├── App.tsx          # form: operation dropdown, two inputs, result/error
-│   └── App.css
+│   ├── Calculator.tsx   # the calculator: keypad, display, all state/logic
+│   ├── App.tsx          # thin wrapper, renders <Calculator />
+│   └── App.css / index.css
 └── package.json
 ```
+
+A numeric keypad, not a form: type digits, pick an operator (+, −, ×, ÷, xʸ,
+%), type the second number, press `=`. `√` applies immediately to whatever is
+on screen. Percentage is entered *base, then %, then percent* (`200`, `%`,
+`50` → 50% of 200), matching how most physical calculators do it — the
+backend's contract is `percentage(a=percent, b=base)`, so the values are
+swapped only at the call site, not in the API. No operator chaining (e.g.
+`5 + 3 × 2` continuously) — every calculation is a single request to the
+backend, so once a second number is being typed, only digits, `=`, or `C`
+are accepted.
 
 Run it (needs the backend running on `:8000` — see above):
 

@@ -1,31 +1,27 @@
 # Sezzle Calculator
 
-A full-stack calculator application: Go backend, React (TypeScript) frontend.
+A full-stack calculator: Go backend (REST API), React + TypeScript frontend
+(numeric keypad UI). Built in staged, reviewable commits — see git history
+and [AI_USAGE.md](AI_USAGE.md) for the process.
 
-## Status
+## Quick start (Docker)
 
-Built in staged, reviewable commits. Current state:
+```bash
+docker compose up --build
+```
 
-- [x] **Backend core logic** — `internal/calculator` package: Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage. Table-driven unit tests, 100% coverage.
-- [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
-- [x] **Backend Dockerfile** — multi-stage build (`golang:1.24-alpine` → `alpine:3.20`).
-- [x] **Frontend** — Vite + React + TypeScript, numeric-keypad calculator UI covering all 7 operations, responsive down to small phones.
-- [x] **Frontend tests** — Vitest + React Testing Library, 13 tests, 84% statement / 100% function coverage.
-- [ ] Full-stack `docker-compose`
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8000
 
-This section will be replaced by a normal README (setup, API examples, design decisions) once the stack is complete — see git history for the incremental build-out.
-
-## Stack
-
-- **Backend**: Go (standard library `net/http`, no external router)
-- **Frontend**: React + TypeScript (Vite)
-- **Infrastructure**: Docker + docker-compose
+That's the whole setup — no local Go or Node needed. To run each side
+natively instead (for development), see below.
 
 ## Backend
 
 ```
 backend/
 ├── go.mod
+├── Dockerfile
 ├── cmd/server/main.go        # entry point, starts the HTTP server on :8000
 └── internal/
     ├── calculator/
@@ -34,7 +30,16 @@ backend/
     └── api/
         ├── handler.go          # one HTTP handler per operation
         ├── response.go         # shared JSON success/error envelope
-        └── handler_test.go     # httptest-based handler tests
+        ├── middleware.go       # CORS
+        └── *_test.go           # httptest-based handler + middleware tests
+```
+
+Run natively:
+
+```bash
+cd backend
+go run ./cmd/server
+# listening on :8000
 ```
 
 Run the tests:
@@ -44,15 +49,7 @@ cd backend
 go test ./... -v -cover
 ```
 
-Run the server:
-
-```bash
-cd backend
-go run ./cmd/server
-# listening on :8000
-```
-
-Or with Docker:
+Or just the container:
 
 ```bash
 cd backend
@@ -65,6 +62,8 @@ negative number, and any operation that produces a non-finite result (`NaN`/`Inf
 e.g. a negative base with a fractional exponent) return a sentinel error instead
 of a bogus value, which the HTTP layer turns into a `400` with a JSON `error` body.
 
+**Coverage**: 100% statements (`internal/calculator`, `internal/api`).
+
 ### API
 
 All endpoints accept `POST` with a JSON body and return `{"result": <number>, "operation": "<name>"}`
@@ -76,7 +75,7 @@ on success, or `{"error": "<message>"}` with a `4xx` status on failure.
 | `POST /api/v1/subtract` | `{"a": 10, "b": 5}` |
 | `POST /api/v1/multiply` | `{"a": 10, "b": 5}` |
 | `POST /api/v1/divide` | `{"a": 10, "b": 5}` |
-| `POST /api/v1/percentage` | `{"a": 50, "b": 200}` (a% of b) |
+| `POST /api/v1/percentage` | `{"a": 50, "b": 200}` → 50% of 200 |
 | `POST /api/v1/power` | `{"base": 2, "exponent": 10}` |
 | `POST /api/v1/sqrt` | `{"a": 16}` |
 | `GET /health` | — |
@@ -93,26 +92,29 @@ curl -X POST http://localhost:8000/api/v1/divide -d '{"a":10,"b":0}'
 
 ```
 frontend/
-├── src/
-│   ├── api/client.ts   # typed fetch wrapper, one request shape per operation
-│   ├── types.ts        # Operation union + response type
-│   ├── Calculator.tsx   # the calculator: keypad, display, all state/logic
-│   ├── App.tsx          # thin wrapper, renders <Calculator />
-│   └── App.css / index.css
-└── package.json
+├── Dockerfile
+├── package.json
+└── src/
+    ├── api/
+    │   ├── client.ts        # typed fetch wrapper, one request shape per operation
+    │   └── client.test.ts
+    ├── Calculator/
+    │   ├── Calculator.tsx    # the calculator: keypad, display, all state/logic
+    │   └── Calculator.test.tsx
+    ├── types.ts             # Operation union + response type
+    ├── App.tsx              # thin wrapper, renders <Calculator />
+    └── App.css / index.css
 ```
 
 A numeric keypad, not a form: type digits, pick an operator (+, −, ×, ÷, xʸ,
 %), type the second number, press `=`. `√` applies immediately to whatever is
 on screen. Percentage is entered *base, then %, then percent* (`200`, `%`,
-`50` → 50% of 200), matching how most physical calculators do it — the
-backend's contract is `percentage(a=percent, b=base)`, so the values are
-swapped only at the call site, not in the API. No operator chaining (e.g.
-`5 + 3 × 2` continuously) — every calculation is a single request to the
-backend, so once a second number is being typed, only digits, `=`, or `C`
-are accepted.
+`50` → 50% of 200), matching how most physical calculators do it. No operator
+chaining (e.g. `5 + 3 × 2` continuously) — every calculation is a real request
+to the backend, so once a second number is being typed, only digits, `=`, or
+`C` are accepted.
 
-Run it (needs the backend running on `:8000` — see above):
+Run natively (needs the backend running on `:8000`):
 
 ```bash
 cd frontend
@@ -130,19 +132,40 @@ cd frontend
 npm test              # or: npm run test:coverage
 ```
 
+**Coverage**: 84% statements, 100% functions (13 tests — api client + full calculator flows, including error paths).
+
+## Design decisions
+
+- **Go over a more familiar language** — the posting names Go as Sezzle's preferred stack.
+- **Per-operation REST endpoints** (`/api/v1/add`, `/subtract`, ...) instead of one generic `/calculate` with an operation field — each route has one job, one handler, one focused set of tests.
+- **No third-party router** — Go 1.22+'s stdlib `http.ServeMux` already does method+path routing and automatic `405`s, so a dependency wasn't needed for 7 endpoints.
+- **Vite over Create React App** — CRA is deprecated upstream; Vite is the current standard.
+- **A real keypad UI, not a form** — closer to what "calculator" actually means, at the cost of a deliberate simplification (no chaining) explained above.
+- **No TypeScript `enum`** — string literal unions and `as const` objects instead, avoiding `enum`'s compilation/tree-shaking quirks.
+- **`VITE_API_URL` is a Docker build ARG, not a runtime env var** — Vite inlines `VITE_*` variables into the JS bundle at build time, so setting it via `docker-compose`'s `environment:` would have no effect; it also has to be a browser-reachable URL (`http://localhost:8000`), not the internal Docker service name, since the browser — not another container — makes the request.
+
+## Assumptions
+
+- **No calculation history or persistence** — each calculation is independent; nothing is stored server-side or across page reloads.
+- **Single user per session, no auth** — not asked for, and out of scope for a calculator API.
+- **`percentage(a, b)` means "a% of b"** — the operation is ambiguous by name alone, so this is the specific interpretation both the API and the UI commit to (entered as *base, then %, then percent* — see Frontend section above).
+- **Inputs come only from the on-screen keypad**, never a free-text field — so there's no arbitrary-string parsing to defend against on the client; the backend still validates independently, since it can't trust that assumption from a network caller.
+
 ## Project Structure
 
 ```
 sezzle-calculator/
 ├── backend/
 │   ├── go.mod
+│   ├── Dockerfile
 │   ├── cmd/server/
 │   └── internal/
 │       ├── calculator/
 │       └── api/
 ├── frontend/
+│   ├── Dockerfile
 │   └── src/
-├── docker-compose.yml   # not yet runnable — see Status above
+├── docker-compose.yml
 ├── Makefile
 ├── AI_USAGE.md
 └── README.md

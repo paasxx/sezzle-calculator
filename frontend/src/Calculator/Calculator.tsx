@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { calculate } from "./api/client";
+import { calculate } from "../api/client";
 
+// Used in the screen's "12 ˆ" expression preview — kept simple/clean there.
 const OPERATOR_SYMBOLS = {
   add: "+",
   subtract: "−",
@@ -11,6 +12,17 @@ const OPERATOR_SYMBOLS = {
 } as const;
 
 type BinaryOperation = keyof typeof OPERATOR_SYMBOLS;
+
+// Button labels, deliberately separate from OPERATOR_SYMBOLS above: "xʸ"
+// reads better as a key cap than it does inline in the expression preview.
+const OPERATOR_KEY_LABELS: Record<BinaryOperation, string> = {
+  add: "+",
+  subtract: "−",
+  multiply: "×",
+  divide: "÷",
+  power: "xʸ",
+  percentage: "%",
+};
 
 // float64 (both here and in the Go backend) only carries ~15-17 significant
 // digits reliably — beyond that, further digits wouldn't reflect the actual
@@ -151,28 +163,28 @@ function Calculator() {
       <div className="keypad">
         <button onClick={clearAll} className="key key-clear">C</button>
         <button onClick={backspace} className="key key-function">⌫</button>
-        <button onClick={() => selectOperator("percentage")} className="key key-operator">{OPERATOR_SYMBOLS.percentage}</button>
-        <button onClick={() => selectOperator("divide")} className="key key-operator">{OPERATOR_SYMBOLS.divide}</button>
+        <button onClick={() => selectOperator("percentage")} className="key key-operator">{OPERATOR_KEY_LABELS.percentage}</button>
+        <button onClick={() => selectOperator("divide")} className="key key-operator">{OPERATOR_KEY_LABELS.divide}</button>
 
         <button onClick={() => inputDigit("7")} className="key">7</button>
         <button onClick={() => inputDigit("8")} className="key">8</button>
         <button onClick={() => inputDigit("9")} className="key">9</button>
-        <button onClick={() => selectOperator("multiply")} className="key key-operator">{OPERATOR_SYMBOLS.multiply}</button>
+        <button onClick={() => selectOperator("multiply")} className="key key-operator">{OPERATOR_KEY_LABELS.multiply}</button>
 
         <button onClick={() => inputDigit("4")} className="key">4</button>
         <button onClick={() => inputDigit("5")} className="key">5</button>
         <button onClick={() => inputDigit("6")} className="key">6</button>
-        <button onClick={() => selectOperator("subtract")} className="key key-operator">{OPERATOR_SYMBOLS.subtract}</button>
+        <button onClick={() => selectOperator("subtract")} className="key key-operator">{OPERATOR_KEY_LABELS.subtract}</button>
 
         <button onClick={() => inputDigit("1")} className="key">1</button>
         <button onClick={() => inputDigit("2")} className="key">2</button>
         <button onClick={() => inputDigit("3")} className="key">3</button>
-        <button onClick={() => selectOperator("add")} className="key key-operator">{OPERATOR_SYMBOLS.add}</button>
+        <button onClick={() => selectOperator("add")} className="key key-operator">{OPERATOR_KEY_LABELS.add}</button>
 
         <button onClick={applySqrt} className="key key-function">√</button>
         <button onClick={() => inputDigit("0")} className="key">0</button>
         <button onClick={inputDecimal} className="key">.</button>
-        <button onClick={() => selectOperator("power")} className="key key-operator">{OPERATOR_SYMBOLS.power}</button>
+        <button onClick={() => selectOperator("power")} className="key key-operator">{OPERATOR_KEY_LABELS.power}</button>
 
         <button
           onClick={equals}

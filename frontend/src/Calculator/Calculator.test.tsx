@@ -2,9 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Calculator from "./Calculator";
-import { calculate } from "./api/client";
+import { calculate } from "../api/client";
 
-vi.mock("./api/client", () => ({
+vi.mock("../api/client", () => ({
   calculate: vi.fn(),
 }));
 
@@ -138,7 +138,7 @@ describe("Calculator", () => {
     await user.click(key("C"));
     mockedCalculate.mockResolvedValue({ result: 8, operation: "power" });
     await user.click(key("2"));
-    await user.click(key("ˆ"));
+    await user.click(key("xʸ"));
     await user.click(key("3"));
     await user.click(key("="));
     expect(mockedCalculate).toHaveBeenCalledWith("power", 2, 3);

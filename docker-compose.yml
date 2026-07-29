@@ -1,7 +1,3 @@
-# NOT YET RUNNABLE: backend/Dockerfile lands in Stage 3, frontend/ (and its
-# Dockerfile) lands in Stages 4-8. This file previews the intended shape.
-version: "3.9"
-
 services:
   backend:
     build: ./backend
@@ -9,10 +5,13 @@ services:
       - "8000:8000"
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # Browser-reachable URL, not the Docker service name — this is what
+        # gets baked into the JS bundle at build time (see frontend/Dockerfile).
+        VITE_API_URL: http://localhost:8000
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://localhost:8000

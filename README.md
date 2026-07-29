@@ -4,26 +4,33 @@ A full-stack calculator: Go backend (REST API), React + TypeScript frontend
 (numeric keypad UI). Built in staged, reviewable commits — see git history
 and [AI_USAGE.md](AI_USAGE.md) for the process.
 
+All commands below are run from the project root (the folder this file is in).
+
 ## Quick start (Docker)
 
 ```bash
-docker compose up --build
+make build
+# same thing directly: docker compose up --build
 ```
 
 - Frontend: http://localhost:3000
 - Backend: http://localhost:8000
 
-That's the whole setup — no local Go or Node needed. To run each side
+That's the whole setup — no local Go or Node needed. `make run` starts it
+again without rebuilding; `make stop` tears it down. To run each side
 natively instead (for development), see below.
 
 ## Running the tests
 
 ```bash
-cd backend && go test ./... -v -cover      # 100% statement coverage
-cd frontend && npm install && npm test     # or: npm run test:coverage — 84% statements, 100% functions
+make test              # both — needs Go and Node installed
+make test-backend      # go test ./... -v -cover — 100% statement coverage
+make test-frontend     # npm test — 84% statements, 100% functions
 ```
 
-Or via `make test-backend` / `make test-frontend`.
+No local Go/Node? `make test-docker` runs the same tests inside containers
+instead (builds each Dockerfile's `builder` stage, which still has the
+toolchain and test files — the final images strip both to stay small).
 
 ## Backend
 
@@ -43,7 +50,7 @@ backend/
         └── *_test.go           # httptest-based handler + middleware tests
 ```
 
-Run natively:
+Run natively (`make dev-backend`, or directly):
 
 ```bash
 cd backend
@@ -51,7 +58,7 @@ go run ./cmd/server
 # listening on :8000
 ```
 
-Run the tests:
+Run the tests (`make test-backend`, or directly):
 
 ```bash
 cd backend
@@ -123,8 +130,9 @@ chaining (e.g. `5 + 3 × 2` continuously) — every calculation is a real reques
 to the backend, so once a second number is being typed, only digits, `=`, or
 `C` are accepted.
 
-Run natively (needs the backend running on `:8000`) — a separate path from
-the Docker quick start above, on Vite's own dev port rather than `:3000`:
+Run natively (`make dev-frontend`, or directly) — needs the backend running
+on `:8000`; a separate path from the Docker quick start above, on Vite's own
+dev port rather than `:3000`:
 
 ```bash
 cd frontend
@@ -135,7 +143,7 @@ npm run dev
 
 Talks to the backend via `VITE_API_URL` (defaults to `http://localhost:8000`).
 
-Run the tests:
+Run the tests (`make test-frontend`, or directly):
 
 ```bash
 cd frontend
@@ -160,6 +168,7 @@ npm test              # or: npm run test:coverage
 - **Single user per session, no auth** — not asked for, and out of scope for a calculator API.
 - **`percentage(a, b)` means "a% of b"** — the operation is ambiguous by name alone, so this is the specific interpretation both the API and the UI commit to (entered as *base, then %, then percent* — see Frontend section above).
 - **Inputs come only from the on-screen keypad**, never a free-text field — so there's no arbitrary-string parsing to defend against on the client; the backend still validates independently, since it can't trust that assumption from a network caller.
+- **One operation at a time, deliberately** — `12 + 3` works, but pressing another operator instead of `=` doesn't chain into `12 + 3 × 2`; it's blocked. Every calculation is a real backend request, not local arithmetic, so chaining would mean firing requests mid-keystroke — not worth the complexity for this scope.
 
 ## Project Structure
 

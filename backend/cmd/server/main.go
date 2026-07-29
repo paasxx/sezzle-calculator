@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	mux := api.NewMux()
+	handler := api.Handler()
 
 	const addr = ":8000"
 	log.Printf("listening on %s", addr)
-	if err := http.ListenAndServe(addr, mux); err != nil {
+	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatal(err)
 	}
 }

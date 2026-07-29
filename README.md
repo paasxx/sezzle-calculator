@@ -9,7 +9,7 @@ Built in staged, reviewable commits. Current state:
 - [x] **Backend core logic** — `internal/calculator` package: Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage. Table-driven unit tests, 100% coverage.
 - [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
 - [x] **Backend Dockerfile** — multi-stage build (`golang:1.24-alpine` → `alpine:3.20`).
-- [ ] Frontend (React + TypeScript)
+- [x] **Frontend (minimal)** — Vite + React + TypeScript, one form covering all 7 operations, talks to the real backend.
 - [ ] Frontend tests
 - [ ] Full-stack `docker-compose`
 
@@ -89,6 +89,29 @@ curl -X POST http://localhost:8000/api/v1/divide -d '{"a":10,"b":0}'
 # {"error":"division by zero"}  (HTTP 400)
 ```
 
+## Frontend
+
+```
+frontend/
+├── src/
+│   ├── api/client.ts   # typed fetch wrapper, one request shape per operation
+│   ├── types.ts        # Operation union + response type
+│   ├── App.tsx          # form: operation dropdown, two inputs, result/error
+│   └── App.css
+└── package.json
+```
+
+Run it (needs the backend running on `:8000` — see above):
+
+```bash
+cd frontend
+npm install
+npm run dev
+# http://localhost:5173
+```
+
+Talks to the backend via `VITE_API_URL` (defaults to `http://localhost:8000`).
+
 ## Project Structure
 
 ```
@@ -99,6 +122,8 @@ sezzle-calculator/
 │   └── internal/
 │       ├── calculator/
 │       └── api/
+├── frontend/
+│   └── src/
 ├── docker-compose.yml   # not yet runnable — see Status above
 ├── Makefile
 ├── AI_USAGE.md

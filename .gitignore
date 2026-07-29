@@ -1,14 +1,9 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.env
-venv/
-.venv/
+# Go
+backend/coverage.out
+*.test
 
-# Node
+# Node (frontend/ has its own .gitignore for node_modules/, dist/, etc.)
 node_modules/
-frontend/build/
 frontend/.env
 
 # Docker

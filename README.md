@@ -7,7 +7,7 @@ A full-stack calculator application: Go backend, React (TypeScript) frontend.
 Built in staged, reviewable commits. Current state:
 
 - [x] **Backend core logic** — `internal/calculator` package: Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage. Table-driven unit tests, 100% coverage.
-- [ ] Backend HTTP/REST layer
+- [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
 - [ ] Backend Dockerfile
 - [ ] Frontend (React + TypeScript)
 - [ ] Frontend tests
@@ -26,10 +26,15 @@ This section will be replaced by a normal README (setup, API examples, design de
 ```
 backend/
 ├── go.mod
+├── cmd/server/main.go        # entry point, starts the HTTP server on :8000
 └── internal/
-    └── calculator/
-        ├── calculator.go       # Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage
-        └── calculator_test.go  # table-driven tests
+    ├── calculator/
+    │   ├── calculator.go       # Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage
+    │   └── calculator_test.go  # table-driven tests
+    └── api/
+        ├── handler.go          # one HTTP handler per operation
+        ├── response.go         # shared JSON success/error envelope
+        └── handler_test.go     # httptest-based handler tests
 ```
 
 Run the tests:
@@ -39,10 +44,42 @@ cd backend
 go test ./... -v -cover
 ```
 
+Run the server:
+
+```bash
+cd backend
+go run ./cmd/server
+# listening on :8000
+```
+
 Each operation returns `(float64, error)` — division by zero, square root of a
 negative number, and any operation that produces a non-finite result (`NaN`/`Inf`,
 e.g. a negative base with a fractional exponent) return a sentinel error instead
-of a bogus value.
+of a bogus value, which the HTTP layer turns into a `400` with a JSON `error` body.
+
+### API
+
+All endpoints accept `POST` with a JSON body and return `{"result": <number>, "operation": "<name>"}`
+on success, or `{"error": "<message>"}` with a `4xx` status on failure.
+
+| Endpoint | Body |
+|---|---|
+| `POST /api/v1/add` | `{"a": 10, "b": 5}` |
+| `POST /api/v1/subtract` | `{"a": 10, "b": 5}` |
+| `POST /api/v1/multiply` | `{"a": 10, "b": 5}` |
+| `POST /api/v1/divide` | `{"a": 10, "b": 5}` |
+| `POST /api/v1/percentage` | `{"a": 50, "b": 200}` (a% of b) |
+| `POST /api/v1/power` | `{"base": 2, "exponent": 10}` |
+| `POST /api/v1/sqrt` | `{"a": 16}` |
+| `GET /health` | — |
+
+```bash
+curl -X POST http://localhost:8000/api/v1/add -d '{"a":10,"b":5}'
+# {"result":15,"operation":"add"}
+
+curl -X POST http://localhost:8000/api/v1/divide -d '{"a":10,"b":0}'
+# {"error":"division by zero"}  (HTTP 400)
+```
 
 ## Project Structure
 
@@ -50,8 +87,10 @@ of a bogus value.
 sezzle-calculator/
 ├── backend/
 │   ├── go.mod
+│   ├── cmd/server/
 │   └── internal/
-│       └── calculator/
+│       ├── calculator/
+│       └── api/
 ├── docker-compose.yml   # not yet runnable — see Status above
 ├── Makefile
 ├── AI_USAGE.md

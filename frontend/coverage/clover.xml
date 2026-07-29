@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1785360141349" clover="3.2.0">
+  <project timestamp="1785360141349" name="All files">
+    <metrics statements="89" coveredstatements="82" conditionals="72" coveredconditionals="54" methods="30" coveredmethods="30" elements="191" coveredelements="166" complexity="0" loc="89" ncloc="89" packages="2" files="2" classes="2"/>
+    <package name="src">
+      <metrics statements="79" coveredstatements="72" conditionals="63" coveredconditionals="46" methods="28" coveredmethods="28"/>
+      <file name="Calculator.tsx" path="/Users/paasxx/Documents/github/sezzle-calculator/frontend/src/Calculator.tsx">
+        <metrics statements="79" coveredstatements="72" conditionals="63" coveredconditionals="46" methods="28" coveredmethods="28"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="23" count="65" type="cond" truecount="1" falsecount="1"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="31" count="65" type="stmt"/>
+        <line num="32" count="65" type="stmt"/>
+        <line num="33" count="65" type="stmt"/>
+        <line num="34" count="65" type="stmt"/>
+        <line num="35" count="65" type="stmt"/>
+        <line num="36" count="65" type="stmt"/>
+        <line num="41" count="65" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="27" type="cond" truecount="1" falsecount="1"/>
+        <line num="45" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="7" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="48" count="7" type="stmt"/>
+        <line num="50" count="20" type="stmt"/>
+        <line num="51" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="9" type="stmt"/>
+        <line num="58" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="2" type="stmt"/>
+        <line num="65" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="71" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="72" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="77" count="3" type="stmt"/>
+        <line num="78" count="3" type="stmt"/>
+        <line num="79" count="3" type="stmt"/>
+        <line num="80" count="3" type="stmt"/>
+        <line num="84" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="85" count="7" type="stmt"/>
+        <line num="86" count="7" type="stmt"/>
+        <line num="87" count="7" type="stmt"/>
+        <line num="91" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="92" count="2" type="stmt"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="94" count="2" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="97" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="104" count="6" type="cond" truecount="4" falsecount="1"/>
+        <line num="105" count="6" type="stmt"/>
+        <line num="106" count="6" type="stmt"/>
+        <line num="107" count="6" type="stmt"/>
+        <line num="112" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="4" type="stmt"/>
+        <line num="116" count="4" type="stmt"/>
+        <line num="117" count="4" type="stmt"/>
+        <line num="119" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="121" count="6" type="stmt"/>
+        <line num="122" count="6" type="stmt"/>
+        <line num="129" count="65" type="cond" truecount="2" falsecount="0"/>
+        <line num="135" count="65" type="cond" truecount="2" falsecount="0"/>
+        <line num="137" count="65" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="157" count="1" type="stmt"/>
+        <line num="158" count="2" type="stmt"/>
+        <line num="159" count="4" type="stmt"/>
+        <line num="160" count="2" type="stmt"/>
+        <line num="162" count="1" type="stmt"/>
+        <line num="163" count="4" type="stmt"/>
+        <line num="164" count="2" type="stmt"/>
+        <line num="165" count="1" type="stmt"/>
+        <line num="167" count="2" type="stmt"/>
+        <line num="168" count="4" type="stmt"/>
+        <line num="169" count="2" type="stmt"/>
+        <line num="170" count="2" type="stmt"/>
+        <line num="173" count="5" type="stmt"/>
+        <line num="175" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.api">
+      <metrics statements="10" coveredstatements="10" conditionals="9" coveredconditionals="8" methods="2" coveredmethods="2"/>
+      <file name="client.ts" path="/Users/paasxx/Documents/github/sezzle-calculator/frontend/src/api/client.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="9" coveredconditionals="8" methods="2" coveredmethods="2"/>
+        <line num="3" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="29" count="4" type="cond" truecount="3" falsecount="0"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

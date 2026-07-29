@@ -10,7 +10,7 @@ Built in staged, reviewable commits. Current state:
 - [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
 - [x] **Backend Dockerfile** — multi-stage build (`golang:1.24-alpine` → `alpine:3.20`).
 - [x] **Frontend** — Vite + React + TypeScript, numeric-keypad calculator UI covering all 7 operations, responsive down to small phones.
-- [ ] Frontend tests
+- [x] **Frontend tests** — Vitest + React Testing Library, 13 tests, 84% statement / 100% function coverage.
 - [ ] Full-stack `docker-compose`
 
 This section will be replaced by a normal README (setup, API examples, design decisions) once the stack is complete — see git history for the incremental build-out.
@@ -122,6 +122,13 @@ npm run dev
 ```
 
 Talks to the backend via `VITE_API_URL` (defaults to `http://localhost:8000`).
+
+Run the tests:
+
+```bash
+cd frontend
+npm test              # or: npm run test:coverage
+```
 
 ## Project Structure
 

@@ -6,7 +6,7 @@ const OPERATOR_SYMBOLS = {
   subtract: "−",
   multiply: "×",
   divide: "÷",
-  power: "xʸ",
+  power: "ˆ",
   percentage: "%",
 } as const;
 
@@ -138,7 +138,11 @@ function Calculator() {
     <main className="calculator">
       <h1>Calculator</h1>
       <div className="screen">
-        <div className="display" style={{ fontSize: screenFontSize(shownText) }}>
+        <div
+          className="display"
+          data-testid="display"
+          style={{ fontSize: screenFontSize(shownText) }}
+        >
           {shownText}
         </div>
       </div>
@@ -147,28 +151,28 @@ function Calculator() {
       <div className="keypad">
         <button onClick={clearAll} className="key key-clear">C</button>
         <button onClick={backspace} className="key key-function">⌫</button>
-        <button onClick={() => selectOperator("percentage")} className="key key-operator">%</button>
-        <button onClick={() => selectOperator("divide")} className="key key-operator">÷</button>
+        <button onClick={() => selectOperator("percentage")} className="key key-operator">{OPERATOR_SYMBOLS.percentage}</button>
+        <button onClick={() => selectOperator("divide")} className="key key-operator">{OPERATOR_SYMBOLS.divide}</button>
 
         <button onClick={() => inputDigit("7")} className="key">7</button>
         <button onClick={() => inputDigit("8")} className="key">8</button>
         <button onClick={() => inputDigit("9")} className="key">9</button>
-        <button onClick={() => selectOperator("multiply")} className="key key-operator">×</button>
+        <button onClick={() => selectOperator("multiply")} className="key key-operator">{OPERATOR_SYMBOLS.multiply}</button>
 
         <button onClick={() => inputDigit("4")} className="key">4</button>
         <button onClick={() => inputDigit("5")} className="key">5</button>
         <button onClick={() => inputDigit("6")} className="key">6</button>
-        <button onClick={() => selectOperator("subtract")} className="key key-operator">−</button>
+        <button onClick={() => selectOperator("subtract")} className="key key-operator">{OPERATOR_SYMBOLS.subtract}</button>
 
         <button onClick={() => inputDigit("1")} className="key">1</button>
         <button onClick={() => inputDigit("2")} className="key">2</button>
         <button onClick={() => inputDigit("3")} className="key">3</button>
-        <button onClick={() => selectOperator("add")} className="key key-operator">+</button>
+        <button onClick={() => selectOperator("add")} className="key key-operator">{OPERATOR_SYMBOLS.add}</button>
 
         <button onClick={applySqrt} className="key key-function">√</button>
         <button onClick={() => inputDigit("0")} className="key">0</button>
         <button onClick={inputDecimal} className="key">.</button>
-        <button onClick={() => selectOperator("power")} className="key key-operator">xʸ</button>
+        <button onClick={() => selectOperator("power")} className="key key-operator">{OPERATOR_SYMBOLS.power}</button>
 
         <button
           onClick={equals}

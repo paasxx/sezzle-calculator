@@ -13,4 +13,4 @@ test-backend:
 	cd backend && go test ./... -v -cover
 
 test-frontend:
-	cd frontend && npm test -- --watchAll=false
+	cd frontend && npm test

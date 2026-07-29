@@ -1,0 +1,18 @@
+# NOT YET RUNNABLE: backend/Dockerfile lands in Stage 3, frontend/ (and its
+# Dockerfile) lands in Stages 4-8. This file previews the intended shape.
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:8000

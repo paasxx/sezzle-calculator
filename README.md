@@ -16,6 +16,15 @@ docker compose up --build
 That's the whole setup — no local Go or Node needed. To run each side
 natively instead (for development), see below.
 
+## Running the tests
+
+```bash
+cd backend && go test ./... -v -cover      # 100% statement coverage
+cd frontend && npm install && npm test     # or: npm run test:coverage — 84% statements, 100% functions
+```
+
+Or via `make test-backend` / `make test-frontend`.
+
 ## Backend
 
 ```
@@ -114,7 +123,8 @@ chaining (e.g. `5 + 3 × 2` continuously) — every calculation is a real reques
 to the backend, so once a second number is being typed, only digits, `=`, or
 `C` are accepted.
 
-Run natively (needs the backend running on `:8000`):
+Run natively (needs the backend running on `:8000`) — a separate path from
+the Docker quick start above, on Vite's own dev port rather than `:3000`:
 
 ```bash
 cd frontend

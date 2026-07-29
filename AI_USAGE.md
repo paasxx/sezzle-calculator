@@ -13,3 +13,9 @@ How AI (Claude, via Claude Code) was used on this assignment, by build stage.
 - **Per-operation REST endpoints** (`/api/v1/add`, `/subtract`, ...) instead of one generic `/calculate` — one handler, one job each.
 - Built `internal/api` (handlers, JSON response helpers) and `cmd/server`. Strict JSON decoding, `httptest` handler tests, 100% coverage.
 - Verified against the real running server with `curl` before calling it done.
+
+## Stage 3 — Backend Dockerfile
+
+- Multi-stage build: `golang:1.24-alpine` compiles a static binary, `alpine:3.20` runs it — small final image, no Go toolchain in the shipped container.
+- Relaxed `go.mod`'s `go` directive from the exact local toolchain version (`1.26.5`) down to `1.22` (the actual minimum feature used), so the Docker build doesn't require matching the host's Go patch version.
+- Verified by building the image and hitting the containerized server with `curl`.

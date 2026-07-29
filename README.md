@@ -8,7 +8,7 @@ Built in staged, reviewable commits. Current state:
 
 - [x] **Backend core logic** — `internal/calculator` package: Add, Subtract, Multiply, Divide, Power, Sqrt, Percentage. Table-driven unit tests, 100% coverage.
 - [x] **Backend HTTP/REST layer** — one endpoint per operation, `httptest`-based handler tests, 100% coverage.
-- [ ] Backend Dockerfile
+- [x] **Backend Dockerfile** — multi-stage build (`golang:1.24-alpine` → `alpine:3.20`).
 - [ ] Frontend (React + TypeScript)
 - [ ] Frontend tests
 - [ ] Full-stack `docker-compose`
@@ -50,6 +50,14 @@ Run the server:
 cd backend
 go run ./cmd/server
 # listening on :8000
+```
+
+Or with Docker:
+
+```bash
+cd backend
+docker build -t sezzle-calculator-backend .
+docker run --rm -p 8000:8000 sezzle-calculator-backend
 ```
 
 Each operation returns `(float64, error)` — division by zero, square root of a

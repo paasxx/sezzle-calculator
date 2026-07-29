@@ -1,20 +1,122 @@
-.calculator {
-  max-width: 320px;
-  margin: 48px auto;
-  text-align: center;
-}
-
-.calculator form {
+#root {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 24px 16px;
 }
 
-.calculator .result {
+.calculator {
+  width: 100%;
+  max-width: 320px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.calculator h1 {
+  text-align: center;
+  font-size: 18px;
+  margin: 4px 0 12px;
+}
+
+.screen {
+  background: var(--screen-bg);
+  border-radius: 12px;
+  padding: 22px 18px;
+  min-height: 76px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  text-align: right;
+  overflow: hidden;
+}
+
+/* font-size is set inline (see screenFontSize in Calculator.tsx) — it shrinks
+   as the text gets longer instead of wrapping or getting clipped. */
+.display {
   color: var(--text-h);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.error-text {
+  color: var(--error-text);
+  font-size: 13px;
+  margin: 8px 4px 0;
+  text-align: right;
+}
+
+.keypad {
+  margin-top: 16px;
+  display: grid;
+  /* minmax(0, 1fr), not bare 1fr — otherwise grid tracks refuse to shrink
+     below each button's content size, and the keypad stops shrinking with
+     the card on narrow screens. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.key {
+  aspect-ratio: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--key-bg);
+  color: var(--text-h);
+  font-size: 20px;
+}
+
+.key-function {
+  background: var(--key-function-bg);
+}
+
+.key-clear {
+  background: var(--danger);
+  color: var(--danger-text);
+}
+
+.key-operator {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.key-equals {
+  grid-column: span 4;
+  aspect-ratio: auto;
+  min-height: 44px;
+  border-radius: 24px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 22px;
   font-weight: 600;
 }
 
-.calculator .error {
-  color: #c0392b;
+.key-equals:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Small phones: shrink the outer padding, keypad gap, and key font a bit. */
+@media (max-width: 360px) {
+  #root {
+    padding: 12px;
+  }
+
+  .calculator {
+    padding: 12px;
+  }
+
+  .keypad {
+    gap: 6px;
+  }
+
+  .key {
+    font-size: 16px;
+  }
 }

@@ -23,14 +23,24 @@ natively instead (for development), see below.
 ## Running the tests
 
 ```bash
-make test              # both — needs Go and Node installed
+make test-backend-docker    # no local Go needed
+make test-frontend-docker   # no local Node needed
+```
+
+Builds each Dockerfile's `builder` stage (still has the toolchain and test
+files — the final images strip both to stay small) and runs the tests inside
+the container. Nothing needs to be installed locally, so this is the reliable
+option regardless of what's on the machine running it.
+
+Local Go/Node installed and want to skip Docker? Same tests, run natively:
+
+```bash
 make test-backend      # go test ./... -v -cover — 100% statement coverage
 make test-frontend     # npm test — 84% statements, 100% functions
 ```
 
-No local Go/Node? `make test-docker` runs the same tests inside containers
-instead (builds each Dockerfile's `builder` stage, which still has the
-toolchain and test files — the final images strip both to stay small).
+> Other combinations (e.g. running both suites with one command) are in the
+> [Makefile](Makefile) — check there directly if you want to test locally.
 
 ## Backend
 

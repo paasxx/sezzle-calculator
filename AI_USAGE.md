@@ -49,3 +49,14 @@ driven than a polished one-shot prompt would be.
 - Verified by building both images from scratch and running the full `docker-compose` stack, then hitting it exactly like a fresh clone on another machine would.
 - A DRY-ing pass made the power button and the screen's expression preview share one symbol — user caught that the button ("xʸ") and the screen text ("ˆ") were deliberately meant to differ, since "xʸ" reads worse inline than as a key cap. Split into two small maps instead of one.
 - **`make test-docker`**: user asked why tests still needed local Go/Node given Docker exists, and why not just `docker exec` into the running containers — those run stripped-down production images (compiled binary / static files only, no toolchain or source, by design). Added targets that build only each Dockerfile's `builder` stage instead, which still has both, reusing the existing Dockerfiles rather than adding new ones.
+
+## Stage 9 — Bug fixes from manual QA
+
+User manually tested the built app and reported 3 bugs, all in `Calculator.tsx`:
+
+- **Backspace dead after selecting an operator**: `backspace()` unconditionally no-op'd while `waitingForSecondOperand` was true, so there was no way to back out of a wrongly-picked operator short of `C`-ing the whole calculation. Fixed to cancel the pending operator and drop back to editing the first operand in that state, instead of doing nothing.
+- **`=` accepted with no second operand typed**: `equals()` only checked `operation`/`firstOperand`, not `waitingForSecondOperand` — since the display still shows the first operand's digits at that point, pressing `=` silently computed `firstOperand OP firstOperand`. Fixed by adding the missing check.
+- **"operation produced a non-finite result" on `xʸ`**: reported as a separate bug, but traced back to the same root cause as the one above — `5000` then `xʸ` then `=` (no exponent typed) was computing `5000^5000`, which genuinely overflows `float64`. Confirmed with the user this was the actual repro (not a smaller, in-range case), so no backend change was needed; fixing the `=`-guard bug fixed this too.
+- User's call on the `=` button: initially also disabled it via the `disabled` prop while waiting for the second operand, for a stronger visual signal. User checked Apple's Calculator app and pointed out it doesn't disable `=` in this state, it just does nothing on tap — reverted to keep `=` always enabled when an operation is active, relying solely on the `equals()` guard.
+- Verified there was no Docker build-cache staleness (rebuilt `--no-cache` and diffed the output bundle hash against the running container's — identical) before concluding a "fix didn't show up" report was actually the browser serving a cached page, not a stale image.
+- All 13 existing frontend tests still pass (`make test-frontend-docker`); no new tests added yet for the 3 fixed scenarios.

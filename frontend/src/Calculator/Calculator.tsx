@@ -80,7 +80,16 @@ function Calculator() {
   }
 
   function backspace() {
-    if (error || waitingForSecondOperand) return;
+    if (error) return;
+    if (waitingForSecondOperand) {
+      // No second-operand digit has been typed yet, so there's nothing to
+      // delete from the number — undo the operator selection instead and
+      // drop back to editing the first operand.
+      setOperation(null);
+      setWaitingForSecondOperand(false);
+      setFirstOperand(null);
+      return;
+    }
     setDisplay((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"));
   }
 
@@ -113,7 +122,7 @@ function Calculator() {
   }
 
   async function equals() {
-    if (operation === null || firstOperand === null || isBusy) return;
+    if (operation === null || firstOperand === null || isBusy || waitingForSecondOperand) return;
     setIsBusy(true);
     try {
       const secondOperand = Number(display);

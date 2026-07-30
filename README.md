@@ -128,7 +128,10 @@ on screen. Percentage is entered *base, then %, then percent* (`200`, `%`,
 `50` → 50% of 200), matching how most physical calculators do it. No operator
 chaining (e.g. `5 + 3 × 2` continuously) — every calculation is a real request
 to the backend, so once a second number is being typed, only digits, `=`, or
-`C` are accepted.
+`C` are accepted. Before the second number is typed, `⌫` cancels the pending
+operator instead (back to editing the first number), and `=` is a no-op
+(matching Apple Calculator, `=` isn't disabled, it just does nothing) rather
+than computing against the first number twice.
 
 Run natively (`make dev-frontend`, or directly) — needs the backend running
 on `:8000`; a separate path from the Docker quick start above, on Vite's own
